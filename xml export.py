@@ -1,8 +1,3 @@
-
-# coding: utf-8
-
-# In[1]:
-
 import os
 import wx
 import glob
@@ -11,38 +6,15 @@ import xml.etree.cElementTree as ET
 import xml.etree.ElementTree
 import bisect
 import numpy as np
-# -*- coding: utf8 -*-
-
-
-# In[2]:
 
 def main():
     app = wx.App(False)
     frame = MyFrame(None, 'XML Export')
     app.MainLoop()
 
-
-# In[3]:
-
 def thining(img,img_interval,retain_pt,tie_rays):
-    img_dict = {}
-    for i in img:
-        if str(i[0])[:3] == '999' and i[0] not in retain_pt:
-            retain_pt.append(i[0])
-        img_dict[i[0]] = [float(i[1]),float(i[2])]
-    mask = np.array(np.zeros((5,5)))
-    for i in sorted(tie_rays.iteritems(),key = lambda x:x[1],reverse = True):
-        if i[0] in img_dict:
-            x_mask = bisect.bisect_left(img_interval[0], img_dict[i[0]][0])
-            y_mask = bisect.bisect_left(img_interval[1], img_dict[i[0]][1])
-            if mask[x_mask,y_mask] < 5:
-                mask[x_mask,y_mask] += 1
-                if i[0] not in retain_pt:
-                    retain_pt.append(i[0])
+    #略
     return retain_pt
-
-
-# In[4]:
 
 def mask(CAM_info):
     x_in = -CAM_info[0]*CAM_info[3]
@@ -57,9 +29,6 @@ def mask(CAM_info):
     x_interval = x_interval[1:-1]
     y_interval = y_interval[1:-1]
     return [x_interval,y_interval]
-
-
-# In[5]:
 
 def xml2im(inputXMLFilePath):
     dirpath = os.path.dirname(inputXMLFilePath)
@@ -123,17 +92,8 @@ def xml2im(inputXMLFilePath):
                 point_xy[PhotoId].append([tie_number,tie_x_v,tie_y_v])
         tie_number += 1
     #減點
-    retain_pt = []
-    for ID,img in point_xy.iteritems():
-        CAM = [i[2] for i in photoID if i[0] == ID][0]
-        img_interval = mask(photogroup[CAM])
-        retain_pt = thining(img,img_interval,retain_pt,tie_rays)
-    #不減點
-    ###retain_pt = []
-    ###for ID,img in point_xy.iteritems():
-    ###    for j in [i[0] for i in img]:
-    ###        if j not in retain_pt:
-    ###            retain_pt.append(j)
+    #略
+
     #輸出
     im_file = open(os.path.join(dirpath,XMLname+'.im'),'w')
     for [img_id,img_name,CAM] in photoID:
@@ -153,9 +113,6 @@ def xml2im(inputXMLFilePath):
             im_file.write(str(key).rjust(15)+value[2].rjust(54)+str(1).rjust(6)+'\n')#16,70,76
         im_file.write(str(-99).rjust(15)+'\n')
     del im_file
-
-
-# In[6]:
 
 def xml2eo(inputXMLFilePath):
     dirpath = os.path.dirname(inputXMLFilePath)
@@ -185,9 +142,6 @@ def xml2eo(inputXMLFilePath):
             except:
                 continue
     del new_text
-
-
-# In[7]:
 
 def xml2cam(inputXMLFilePath):
     dirpath = os.path.dirname(inputXMLFilePath)
@@ -251,9 +205,6 @@ def xml2cam(inputXMLFilePath):
         new_text.write('\n')
     del new_text
 
-
-# In[12]:
-
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, #id = wx.ID_ANY, 
@@ -309,8 +260,7 @@ class MyFrame(wx.Frame):
         self.txtCtrl.Clear()
         self.counterror = 0
         self.countClear += 1
-        if self.countClear > 10:
-            self.txtCtrl.WriteText(u'Copyright © 2016 RealWorld Engineering Consultants Inc. All rights reserved\n')
+            
     def OnBtn3(self,evt):
         self.countClear = 0
         if self.a.GetValue() == '' and self.counterror < 5:
@@ -319,8 +269,6 @@ class MyFrame(wx.Frame):
         elif self.a.GetValue() == '' and self.counterror >= 5 and self.counterror < 13:
             self.txtCtrl.WriteText(u'請輸入XML檔：按右上方的"..."\n')
             self.counterror += 1
-        elif self.a.GetValue() == '' and self.counterror >= 13:
-            self.txtCtrl.WriteText(u'(╯‵□′)╯︵┴─┴\n')
         else:
             if self.cb1.GetValue() == True:
                 xml2im(inputfile)
@@ -331,17 +279,6 @@ class MyFrame(wx.Frame):
             if self.cb3.GetValue() == True:
                 xml2cam(inputfile)
                 self.txtCtrl.WriteText(u'CAM檔輸出完成!\n')
-            if self.cb1.GetValue() == False and self.cb2.GetValue() == False and self.cb3.GetValue() == False:
-                self.txtCtrl.WriteText(u'沒東西可輸出阿╮(╯_╰)╭\n')
-
-
-# In[13]:
 
 if __name__ == "__main__":
     main()
-
-
-# In[ ]:
-
-
-
